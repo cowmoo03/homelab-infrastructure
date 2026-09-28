@@ -1,0 +1,39 @@
+# Proxmox Virtualization
+
+## Overview
+
+Proxmox VE is the central virtualization platform for the homelab. It hosts firewall, Linux server, desktop lab, and game-server workloads.
+
+## VM Roles
+
+| Workload | Purpose |
+|---|---|
+| OPNsense | Routing, DHCP, NAT, and firewalling |
+| Ubuntu Server | General Linux administration and storage practice |
+| Ubuntu Desktop | Client system for testing the isolated security lab |
+| Minecraft Server | Public-facing service placed in a dedicated DMZ |
+
+## Storage Practice
+
+A secondary virtual disk was attached to an Ubuntu Server VM, partitioned, formatted with ext4, mounted under `/srv/labdata`, and configured for persistence with `/etc/fstab`.
+
+Example organization:
+
+```text
+/srv/labdata/
+├── backups/
+├── evidence/
+├── logs/
+├── pcaps/
+├── scripts/
+└── tools/
+```
+
+## Operational Practices
+
+- Separate workloads into VMs based on function and trust level
+- Allocate CPU and memory according to service needs
+- Use persistent Linux mounts for service data
+- Keep management interfaces off public-facing networks
+- Use systemd for long-running Linux services
+- Validate networking and storage after reboot
