@@ -4,6 +4,12 @@
 
 The primary lab host is a Dell Precision 3440 SFF with an Intel Core i7-10700. It runs Proxmox VE and hosts the virtual firewall, Linux servers, client VMs, and public-service workloads.
 
+### Memory
+
+The host was upgraded to 32 GB of RAM using four 8 GB DIMMs. Proxmox reports approximately 31 GiB of usable memory, and all four modules are detected and configured at 2400 MT/s.
+
+This additional memory provides more headroom for running multiple virtual machines concurrently, including firewall, server, desktop-lab, and future cybersecurity workloads.
+
 ## Networking
 
 - TP-Link Easy Smart managed switch
