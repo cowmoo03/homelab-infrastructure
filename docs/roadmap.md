@@ -10,6 +10,7 @@ This homelab is an ongoing learning environment. Planned additions include:
 - Ansible for configuration automation
 - Network and service monitoring
 - NAS/file-storage expansion
+- Self-hosted email service using a custom domain, with SPF, DKIM, DMARC, TLS, spam filtering, backups, and secure administration
 - Local AI-assisted administration with no required cloud dependency
 - Improved documentation diagrams and recovery runbooks
 
