@@ -14,6 +14,7 @@ A dedicated Ubuntu Server VM hosts a Paper Minecraft server for a small private 
 - RCON disabled
 - Query disabled
 - GrimAC anti-cheat installed
+- Simple Voice Chat proximity voice plugin installed
 - Dedicated DMZ network
 
 ## Performance Tuning
@@ -52,6 +53,16 @@ The DMZ is blocked from reaching both the management network and the security la
 
 GrimAC is configured in a monitor-first mode so alerts can be reviewed before enabling aggressive automatic punishments. External webhook and proxy-sharing features are disabled.
 
-## Planned Enhancement
+## Proximity Voice Chat
 
-Proximity voice chat is planned using a server-side plugin plus the required client mod, with its voice traffic handled separately from the normal Minecraft game connection.
+Simple Voice Chat is installed on the Paper server and configured for proximity-based in-game voice communication.
+
+Voice traffic is handled separately from normal Minecraft gameplay traffic:
+
+- Minecraft gameplay uses TCP
+- Voice chat uses a dedicated UDP service
+- OPNsense performs destination NAT for the voice service
+- The upstream router forwards only the required UDP port to OPNsense
+- Clients use Fabric with the Simple Voice Chat mod installed
+
+This keeps the voice feature isolated to the Minecraft service without exposing additional management interfaces.
