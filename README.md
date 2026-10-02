@@ -33,6 +33,7 @@ The design uses separate trust zones for infrastructure management, cybersecurit
 - Configured segmented networks using **managed switching, VLAN concepts, Linux bridges, routing, DHCP, NAT, and firewall rules**
 - Created a dedicated **security-lab network** isolated from management systems
 - Built a separate **DMZ for a public-facing Minecraft server**
+- Added **proximity voice chat** using a Paper plugin, Fabric client mod, and dedicated UDP forwarding through OPNsense
 - Deployed and managed **Ubuntu Server** workloads
 - Configured persistent Linux storage with **ext4 and /etc/fstab**
 - Created **systemd** services for application management
@@ -80,7 +81,7 @@ Public-facing workloads receive only the network access required for their funct
 **Networking:** Managed Ethernet switching, VLAN concepts, Linux bridges, DHCP, NAT, firewall policy  
 **Administration:** Linux CLI, SSH, systemd, journalctl, filesystem management  
 **Security:** Network segmentation, DMZ design, least privilege, service hardening  
-**Services:** Paper Minecraft server, GrimAC anti-cheat
+**Services:** Paper Minecraft server, GrimAC anti-cheat, Simple Voice Chat
 
 ## Project Purpose
 
