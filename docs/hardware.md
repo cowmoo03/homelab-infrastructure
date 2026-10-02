@@ -20,6 +20,13 @@ This additional memory provides more headroom for running multiple virtual machi
 
 The lab uses a mix of local SSD storage for virtual machines and additional disks for service data, file-storage experiments, backups, and future NAS work.
 
+Two 2 TB Seagate Exos enterprise HDDs were added for the NAS/storage project. Before use, both drives were checked with SMART data and completed extended self-tests without error. Neither drive showed reallocated, pending, or uncorrectable sectors during validation.
+
+The planned role is:
+
+- Primary 2 TB HDD: multi-user file, photo, and video storage
+- Secondary 2 TB HDD: automated backup target for important data and selected services
+
 ## Design Constraints
 
 A small-form-factor business desktop was intentionally used to keep the project inexpensive, power-efficient, and representative of hardware that can be repurposed for a practical home IT lab.
