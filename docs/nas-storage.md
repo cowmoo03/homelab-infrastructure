@@ -74,6 +74,11 @@ Current retention policy:
 
 A manual daily snapshot was completed successfully and verified to contain the expected storage tree, including the private user directories and shared data.
 
+Backup automation is configured with cron:
+
+- Daily snapshot at 3:00 AM
+- Weekly snapshot every Sunday at 4:00 AM
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -85,6 +90,6 @@ A manual daily snapshot was completed successfully and verified to contain the e
 
 ## Next Steps
 
-- Automate daily and weekly rsnapshot runs
 - Test macOS Finder access
 - Add secure remote access without exposing SMB directly to the internet
+- Test a file restore from an older snapshot
