@@ -63,6 +63,14 @@ The Windows client now maps the SMB shares as persistent network drives with rec
 
 The NAS also has a DHCP reservation on the home router so its LAN address remains consistent and mapped SMB paths do not break after lease changes or router reboots.
 
+## Remote Access
+
+Tailscale is installed on the NAS and client devices to provide encrypted remote access without exposing SMB directly to the public internet.
+
+Remote SMB access was tested successfully from a Windows client while connected through a mobile hotspot, confirming that both the private and shared NAS shares are reachable from outside the home network.
+
+Local clients continue to use the LAN address for direct access, while remote clients use the Tailscale path.
+
 ## Backups
 
 The secondary 2 TB disk is used as a versioned backup target with rsnapshot.
@@ -87,9 +95,9 @@ Backup automation is configured with cron:
 - Storage users use non-login system accounts
 - SMB authentication maps users to their intended private or shared storage
 - Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
+- Remote access is provided through an encrypted overlay network rather than public SMB exposure
 
 ## Next Steps
 
 - Test macOS Finder access
-- Add secure remote access without exposing SMB directly to the internet
 - Test a file restore from an older snapshot
