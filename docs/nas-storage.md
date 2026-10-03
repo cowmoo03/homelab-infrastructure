@@ -63,6 +63,17 @@ The Windows client now maps the SMB shares as persistent network drives with rec
 
 The NAS also has a DHCP reservation on the home router so its LAN address remains consistent and mapped SMB paths do not break after lease changes or router reboots.
 
+## Backups
+
+The secondary 2 TB disk is used as a versioned backup target with rsnapshot.
+
+Current retention policy:
+
+- 7 daily snapshots
+- 4 weekly snapshots
+
+A manual daily snapshot was completed successfully and verified to contain the expected storage tree, including the private user directories and shared data.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -74,7 +85,6 @@ The NAS also has a DHCP reservation on the home router so its LAN address remain
 
 ## Next Steps
 
-- NAS address reserved on the home router to keep SMB mappings stable
+- Automate daily and weekly rsnapshot runs
 - Test macOS Finder access
-- Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
