@@ -82,6 +82,8 @@ Current retention policy:
 
 A manual daily snapshot was completed successfully and verified to contain the expected storage tree, including the private user directories and shared data.
 
+A full restore test was also completed successfully: a test file was snapshotted, deleted from the live SMB share, restored from `daily.0`, and confirmed back on the primary storage with the correct ownership and permissions.
+
 Backup automation is configured with cron:
 
 - Daily snapshot at 3:00 AM
@@ -100,4 +102,3 @@ Backup automation is configured with cron:
 ## Next Steps
 
 - Test macOS Finder access
-- Test a file restore from an older snapshot
