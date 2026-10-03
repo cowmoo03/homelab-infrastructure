@@ -2,7 +2,7 @@
 
 ## Overview
 
-Proxmox VE is the central virtualization platform for the homelab. It hosts firewall, Linux server, desktop lab, and game-server workloads.
+Proxmox VE is the central virtualization platform for the homelab. It hosts firewall, Linux server, desktop lab, game-server, and NAS workloads.
 
 ## VM Roles
 
@@ -12,6 +12,7 @@ Proxmox VE is the central virtualization platform for the homelab. It hosts fire
 | Ubuntu Server | General Linux administration and storage practice |
 | Ubuntu Desktop | Client system for testing the isolated security lab |
 | Minecraft Server | Public-facing service placed in a dedicated DMZ |
+| NAS Server | Multi-user file storage, permissions, quotas, and backups |
 
 ## Storage Practice
 
@@ -28,6 +29,13 @@ Example organization:
 ├── scripts/
 └── tools/
 ```
+
+A dedicated NAS VM was also created with a small SSD-backed operating-system disk. Two validated 2 TB enterprise HDDs were attached directly to the VM using stable host device paths so the guest can manage the data and backup disks separately.
+
+Planned storage roles:
+
+- Primary 2 TB HDD: multi-user files, photos, and videos
+- Secondary 2 TB HDD: automated backup target
 
 ## Operational Practices
 
