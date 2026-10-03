@@ -89,6 +89,14 @@ Backup automation is configured with cron:
 - Daily snapshot at 3:00 AM
 - Weekly snapshot every Sunday at 4:00 AM
 
+## Password Self-Service
+
+A restricted SSH-based password-change workflow was added for a remote storage user. The account is forced into a root-owned password-change utility instead of receiving a normal shell.
+
+The utility updates both the restricted login credential and the corresponding Samba credential in one operation, so the user only needs to maintain one password. The user chooses the password privately; the administrator does not need to know the final password.
+
+The restricted account is limited through OpenSSH `ForceCommand`, forwarding is disabled, and sudo access is limited to the dedicated password-change utility.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
