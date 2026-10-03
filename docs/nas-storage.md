@@ -99,6 +99,6 @@ Backup automation is configured with cron:
 - Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
 - Remote access is provided through an encrypted overlay network rather than public SMB exposure
 
-## Next Steps
+## Status
 
-- Test macOS Finder access
+Core NAS functionality is complete for the current scope. macOS Finder access is intentionally not being tested at this time.
