@@ -16,6 +16,7 @@ flowchart TD
     PVE --> Mgmt[Management Network]
     PVE --> FW[OPNsense Firewall]
     PVE --> Linux[Ubuntu Server]
+    PVE --> NAS[NAS Server]
 
     FW --> SecLab[Security Lab]
     FW --> DMZ[Public-Service DMZ]
@@ -34,11 +35,12 @@ The design uses separate trust zones for infrastructure management, cybersecurit
 - Created a dedicated **security-lab network** isolated from management systems
 - Built a separate **DMZ for a public-facing Minecraft server**
 - Added **proximity voice chat** using a Paper plugin, Fabric client mod, and dedicated UDP forwarding through OPNsense
+- Built a dedicated **multi-user NAS VM** with private storage, shared storage, filesystem permissions, and per-user quotas
 - Deployed and managed **Ubuntu Server** workloads
 - Configured persistent Linux storage with **ext4 and /etc/fstab**
 - Created **systemd** services for application management
 - Hardened public-facing services by reducing exposed ports and separating trust zones
-- Troubleshot routing, DHCP, interface naming, firewall ordering, NAT, and Linux service issues
+- Troubleshot routing, DHCP, interface naming, firewall ordering, NAT, Linux services, and storage configuration
 
 ## Documentation
 
@@ -48,6 +50,7 @@ The design uses separate trust zones for infrastructure management, cybersecurit
 | Networking | [Networking and Segmentation](docs/networking.md) |
 | Firewall | [OPNsense](docs/opnsense.md) |
 | Virtualization | [Proxmox](docs/proxmox.md) |
+| NAS / Storage | [NAS Storage](docs/nas-storage.md) |
 | Hardware | [Hardware](docs/hardware.md) |
 | Minecraft | [Minecraft Server](docs/minecraft.md) |
 | Security | [Security Controls](docs/security.md) |
@@ -80,6 +83,7 @@ Public-facing workloads receive only the network access required for their funct
 **Operating Systems:** Ubuntu Server, Ubuntu Desktop  
 **Networking:** Managed Ethernet switching, VLAN concepts, Linux bridges, DHCP, NAT, firewall policy  
 **Administration:** Linux CLI, SSH, systemd, journalctl, filesystem management  
+**Storage:** ext4, persistent mounts, Linux permissions, user/group quotas  
 **Security:** Network segmentation, DMZ design, least privilege, service hardening  
 **Services:** Paper Minecraft server, GrimAC anti-cheat, Simple Voice Chat
 
@@ -97,5 +101,6 @@ The environment is intentionally evolving as new services, monitoring, automatio
 - Additional isolated security-testing systems
 - Ansible configuration automation
 - Network and service monitoring
+- Secure remote NAS access
 - Local AI-assisted administration
 - Expanded recovery and disaster-recovery documentation
