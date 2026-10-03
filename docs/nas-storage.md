@@ -53,7 +53,7 @@ Samba is installed and configured with three authenticated shares:
 - `Abdullah` — private to the Abdullah account
 - `Shared` — available to authorized members of the shared NAS group
 
-Windows SMB access to the Moemin share was tested successfully through File Explorer, showing the expected `Files`, `Photos`, and `Videos` directories.
+Windows SMB access to the Moemin share was tested successfully through File Explorer. Read/write operations were also validated by creating, renaming, and deleting a test file.
 
 ## Access-Control Design
 
@@ -66,7 +66,6 @@ Windows SMB access to the Moemin share was tested successfully through File Expl
 
 ## Next Steps
 
-- Test write/delete access
 - Test cross-user isolation
 - Test the Shared share
 - Test macOS Finder access
