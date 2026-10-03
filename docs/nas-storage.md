@@ -61,6 +61,8 @@ The Shared SMB area was also tested successfully from Windows with authenticated
 
 The Windows client now maps the SMB shares as persistent network drives with reconnect-at-sign-in enabled, so the private and shared storage remain available directly under This PC.
 
+The NAS also has a DHCP reservation on the home router so its LAN address remains consistent and mapped SMB paths do not break after lease changes or router reboots.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -72,7 +74,7 @@ The Windows client now maps the SMB shares as persistent network drives with rec
 
 ## Next Steps
 
-- Reserve the NAS address on the home router
+- NAS address reserved on the home router to keep SMB mappings stable
 - Test macOS Finder access
 - Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
