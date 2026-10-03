@@ -59,6 +59,8 @@ Cross-user isolation was also tested successfully: an authenticated Moemin sessi
 
 The Shared SMB area was also tested successfully from Windows with authenticated read/write access.
 
+The Windows client now maps the SMB shares as persistent network drives with reconnect-at-sign-in enabled, so the private and shared storage remain available directly under This PC.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -70,6 +72,7 @@ The Shared SMB area was also tested successfully from Windows with authenticated
 
 ## Next Steps
 
+- Reserve the NAS address on the home router
 - Test macOS Finder access
 - Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
