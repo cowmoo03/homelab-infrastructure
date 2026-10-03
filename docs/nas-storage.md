@@ -57,6 +57,8 @@ Windows SMB access to the Moemin share was tested successfully through File Expl
 
 Cross-user isolation was also tested successfully: an authenticated Moemin session was denied access to the Abdullah private share.
 
+The Shared SMB area was also tested successfully from Windows with authenticated read/write access.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -68,7 +70,6 @@ Cross-user isolation was also tested successfully: an authenticated Moemin sessi
 
 ## Next Steps
 
-- Test the Shared share
 - Test macOS Finder access
 - Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
