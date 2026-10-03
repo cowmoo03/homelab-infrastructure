@@ -57,6 +57,8 @@ Windows SMB access to the User1 share was tested successfully through File Explo
 
 Cross-user isolation was also tested successfully: an authenticated User1 session was denied access to the User2 private share.
 
+The Shared SMB area was also tested successfully from Windows with authenticated read/write access.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
@@ -68,7 +70,6 @@ Cross-user isolation was also tested successfully: an authenticated User1 sessio
 
 ## Next Steps
 
-- Test the Shared share
 - Test macOS Finder access
 - Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
