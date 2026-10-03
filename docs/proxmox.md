@@ -30,12 +30,14 @@ Example organization:
 └── tools/
 ```
 
-A dedicated NAS VM was also created with a small SSD-backed operating-system disk. Two validated 2 TB enterprise HDDs were attached directly to the VM using stable host device paths so the guest can manage the data and backup disks separately.
+A dedicated NAS VM was created with a small SSD-backed operating-system disk. Two validated 2 TB enterprise HDDs were attached directly to the VM using stable host device paths so the guest can manage the data and backup disks separately.
 
-Planned storage roles:
+The disks are formatted as ext4 and mounted persistently by filesystem label:
 
-- Primary 2 TB HDD: multi-user files, photos, and videos
-- Secondary 2 TB HDD: automated backup target
+- `STORAGE` → `/srv/storage` for primary multi-user files, photos, and videos
+- `BACKUPS` → `/srv/backups` for automated backup copies
+
+Both filesystems were mounted and verified successfully before user shares and quotas were configured.
 
 ## Operational Practices
 
