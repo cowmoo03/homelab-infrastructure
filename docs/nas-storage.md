@@ -45,18 +45,30 @@ Current allocation:
 
 The shared pool is owned by a dedicated service account so shared files count against the shared quota instead of either user's personal quota.
 
+## SMB Access
+
+Samba is installed and configured with three authenticated shares:
+
+- `Moemin` — private to the Moemin account
+- `Abdullah` — private to the Abdullah account
+- `Shared` — available to authorized members of the shared NAS group
+
+Windows SMB access to the Moemin share was tested successfully through File Explorer, showing the expected `Files`, `Photos`, and `Videos` directories.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
 - Shared storage is accessible only to members of the shared NAS group
 - Administrative access is separate from storage-user access
 - Storage users use non-login system accounts
-- Future SMB access will preserve these permissions for Windows and macOS clients
+- SMB authentication maps users to their intended private or shared storage
+- Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
 
 ## Next Steps
 
-- Configure Samba
-- Add authenticated Windows and macOS access
-- Test user isolation
+- Test write/delete access
+- Test cross-user isolation
+- Test the Shared share
+- Test macOS Finder access
 - Configure automated backups to the secondary disk
 - Add secure remote access without exposing SMB directly to the internet
