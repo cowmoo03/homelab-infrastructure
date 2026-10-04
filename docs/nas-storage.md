@@ -111,6 +111,18 @@ The earlier SSH-based password-change workaround was removed after the web porta
 - Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
 - Remote access is provided through an encrypted overlay network rather than public SMB exposure
 
+## Reboot Validation
+
+A reboot validation was completed successfully. After restarting the NAS VM:
+
+- Both storage filesystems remounted successfully
+- Samba returned to an active state
+- Tailscale reconnected automatically
+- The password portal service returned to an active state
+- Tailscale Serve restored the private HTTPS proxy
+- Windows mapped shares opened normally
+- The password portal remained reachable
+
 ## Status
 
 Core NAS functionality is complete for the current scope. macOS Finder access is intentionally not being tested at this time.
