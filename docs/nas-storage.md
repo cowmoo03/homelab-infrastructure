@@ -99,6 +99,8 @@ A full end-to-end test was completed successfully: the password was changed thro
 
 If the user forgets the password entirely, the administrator can assign a temporary Samba password. The user then signs in to the portal with that temporary password and replaces it privately with a new one.
 
+The earlier SSH-based password-change workaround was removed after the web portal was validated, leaving the browser-based workflow as the supported self-service method.
+
 ## Access-Control Design
 
 - Private user directories are owner-only
