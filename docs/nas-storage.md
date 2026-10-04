@@ -91,11 +91,13 @@ Backup automation is configured with cron:
 
 ## Password Self-Service
 
-A restricted SSH-based password-change workflow was added for a remote storage user. The account is forced into a root-owned password-change utility instead of receiving a normal shell.
+A private web-based Samba password portal is available through Tailscale Serve over HTTPS. It is not exposed to the public internet.
 
-The utility updates both the restricted login credential and the corresponding Samba credential in one operation, so the user only needs to maintain one password. The user chooses the password privately; the administrator does not need to know the final password.
+The portal requires the user's current Samba password before allowing a change. Current-password verification is performed against the local Samba service, and only a successful verification permits the restricted password-reset operation.
 
-The restricted account is limited through OpenSSH `ForceCommand`, forwarding is disabled, and sudo access is limited to the dedicated password-change utility.
+A full end-to-end test was completed successfully: the password was changed through the portal, Windows SMB sessions were cleared, and the new credential was confirmed to open the user's network share.
+
+If the user forgets the password entirely, the administrator can assign a temporary Samba password. The user then signs in to the portal with that temporary password and replaces it privately with a new one.
 
 ## Access-Control Design
 
