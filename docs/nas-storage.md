@@ -111,6 +111,24 @@ The earlier SSH-based password-change workaround was removed after the web porta
 - Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
 - Remote access is provided through an encrypted overlay network rather than public SMB exposure
 
+## SMART Monitoring and Discord Alerts
+
+The Proxmox host now monitors all three attached drives with `smartd`:
+
+- Proxmox system SSD
+- Primary NAS 2 TB HDD
+- Backup NAS 2 TB HDD
+
+The two NAS HDDs are monitored through their stable `/dev/disk/by-path` device paths using the USB Prolific bridge type, so monitoring does not depend on temporary `/dev/sdX` names.
+
+A root-only Discord webhook is stored locally and used by a custom `smartd-runner` script. SMART warnings are sent to a dedicated Discord NAS alerts channel.
+
+The complete alert chain was tested successfully with a synthetic SMART test event:
+
+`smartd -> smartd-runner -> Discord alert script -> Discord channel`
+
+The test alert identified the Proxmox host, affected device, alert type, and SMART message.
+
 ## Reboot Validation
 
 A reboot validation was completed successfully. After restarting the NAS VM:
