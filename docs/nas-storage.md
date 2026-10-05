@@ -111,6 +111,19 @@ The earlier SSH-based password-change workaround was removed after the web porta
 - Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
 - Remote access is provided through an encrypted overlay network rather than public SMB exposure
 
+## Backup Failure Alerts
+
+The NAS backup schedule now runs through a monitoring wrapper instead of calling `rsnapshot` directly.
+
+Current scheduled jobs:
+
+- Daily backup at 03:00
+- Weekly backup every Sunday at 04:00
+
+The wrapper runs the requested `rsnapshot` interval, checks the exit code, and stays silent on success. If the backup fails, it sends a Discord alert to the NAS alerts channel with the host, backup interval, exit code, timestamp, and recent error output.
+
+A synthetic failure alert was tested successfully, and a real daily backup was also run through the wrapper successfully with exit code 0 and no false Discord alert.
+
 ## SMART Monitoring and Discord Alerts
 
 The Proxmox host now monitors all three attached drives with `smartd`:
