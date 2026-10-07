@@ -16,11 +16,11 @@ The primary data disk is organized into private user areas and a shared area:
 ```text
 /srv/storage/
 ├── users/
-│   ├── moemin/
+│   ├── user1/
 │   │   ├── Files/
 │   │   ├── Photos/
 │   │   └── Videos/
-│   └── abdullah/
+│   └── user2/
 │       ├── Files/
 │       ├── Photos/
 │       └── Videos/
@@ -38,8 +38,8 @@ Filesystem quotas are enabled on the primary storage volume.
 
 Current allocation:
 
-- Moemin: 550 GiB
-- Abdullah: 550 GiB
+- User1: 550 GiB
+- User2: 550 GiB
 - Shared pool: 400 GiB
 - Remaining capacity is intentionally left unallocated as reserve
 
@@ -49,13 +49,13 @@ The shared pool is owned by a dedicated service account so shared files count ag
 
 Samba is installed and configured with three authenticated shares:
 
-- `Moemin` — private to the Moemin account
-- `Abdullah` — private to the Abdullah account
+- `User1` — private to the User1 account
+- `User2` — private to the User2 account
 - `Shared` — available to authorized members of the shared NAS group
 
-Windows SMB access to the Moemin share was tested successfully through File Explorer. Read/write operations were validated by creating, renaming, and deleting a test file.
+Windows SMB access to the User1 share was tested successfully through File Explorer. Read/write operations were validated by creating, renaming, and deleting a test file.
 
-Cross-user isolation was also tested successfully: an authenticated Moemin session was denied access to the Abdullah private share.
+Cross-user isolation was also tested successfully: an authenticated User1 session was denied access to the User2 private share.
 
 The Shared SMB area was also tested successfully from Windows with authenticated read/write access.
 
