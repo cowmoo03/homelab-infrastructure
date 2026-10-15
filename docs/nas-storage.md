@@ -124,6 +124,22 @@ The wrapper runs the requested `rsnapshot` interval, checks the exit code, and s
 
 A synthetic failure alert was tested successfully, and a real daily backup was also run through the wrapper successfully with exit code 0 and no false Discord alert.
 
+## Storage Transport Migration
+
+The NAS data disks were migrated from a dual-bay USB dock to an EMC KTN-STL3 disk shelf connected through an LSI SAS2008 external HBA.
+
+The USB dock previously dropped both disks simultaneously, which caused the NAS VM to enter an I/O error state. After moving the same drives to the SAS shelf:
+
+- Both 2 TB enterprise HDDs were detected individually through the HBA
+- Existing ext4 filesystem labels and UUIDs remained intact
+- SMART checks showed zero reallocated, pending, uncorrectable, and CRC errors on both drives
+- The NAS VM disk mappings were updated from unstable USB paths to stable serial-based `/dev/disk/by-id/` paths
+- Both `/srv/storage` and `/srv/backups` mounted successfully inside the NAS VM
+- Samba shares were verified from a Windows client
+- SMART monitoring was updated to stable `by-id` paths and re-enabled successfully
+
+This migration removes the USB dock as a storage dependency and provides a more appropriate SAS-attached platform for future disk expansion.
+
 ## SMART Monitoring and Discord Alerts
 
 The Proxmox host now monitors all three attached drives with `smartd`:
