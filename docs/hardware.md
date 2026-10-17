@@ -1,32 +1,27 @@
-# Hardware
+# Hardware Inventory
 
-## Hypervisor Host
+**Latest reconciliation: October 17, 2026.** Component models are suitable for this public portfolio; serial numbers, WWNs, MAC addresses, and operational addresses are omitted.
 
-The primary lab host is a Dell Precision 3440 SFF with an Intel Core i7-10700. It runs Proxmox VE and hosts the virtual firewall, Linux servers, client VMs, and public-service workloads.
+| Component | Latest recorded configuration | Status |
+|---|---|---|
+| Host | Dell Precision 3440 SFF, Intel Core i7-10700 | Documented host |
+| Memory | Four 8 GB DIMMs, 32 GB total | Latest owner confirmation; previously reported about 31 GiB usable at 2400 MT/s |
+| SSD | 1 TB T-FORCE SSD | Latest confirmed connected SSD; host/VM allocation needs inspection |
+| NAS disks | Two 2 TB Seagate enterprise HDDs | Primary data and separate backup target |
+| Disk shelf | EMC KTN-STL3, 15 bays | In use for existing NAS storage |
+| HBA | LSI 9200-8e / SAS2008 external SAS HBA | Connected to shelf over SFF-8088 |
+| Network adapter | Intel i350-based four-port NIC | Documented; current interface mapping needs verification |
+| Switch | TP-Link TL-SG108E managed switch | Documented; current port/VLAN assignment needs verification |
+| Expansion disks | Four purchased 4 TB HDDs | Awaiting deployment and individual validation |
 
-### Memory
+## Storage History
 
-The host was upgraded to 32 GB of RAM using four 8 GB DIMMs. Proxmox reports approximately 31 GiB of usable memory, and all four modules are detected and configured at 2400 MT/s.
+The two production NAS drives previously passed extended SMART self-tests without reported sector errors. They were later migrated from a USB dock that disconnected during I/O to the SAS shelf. Filesystems and data were retained, and NAS access was tested after migration.
 
-This additional memory provides more headroom for running multiple virtual machines concurrently, including firewall, server, desktop-lab, and future cybersecurity workloads.
+One newly purchased 4 TB SAS drive initially exposed only 3 TB. Its reported user capacity was restored and verified at approximately 4 TB decimal (3.6 TiB). This result applies to that drive only and does not establish the health or capacity of the other three drives. The original production disk arrangement was restored after the test.
 
-## Networking
+## Capacity and Expansion
 
-- TP-Link Easy Smart managed switch
-- Intel i350-based multi-port network adapter
-- Separate physical connectivity for management and segmented lab traffic
+Owned HDD capacity totals 20 TB nominal before formatting or redundancy: two 2 TB drives plus four 4 TB drives. Only the two-drive primary/backup arrangement is documented as deployed. Backup capacity is not additional primary storage.
 
-## Storage
-
-The lab uses a mix of local SSD storage for virtual machines and additional disks for service data, file-storage experiments, backups, and future NAS work.
-
-Two 2 TB Seagate Exos enterprise HDDs were added for the NAS/storage project. Before use, both drives were checked with SMART data and completed extended self-tests without error. Neither drive showed reallocated, pending, or uncorrectable sectors during validation.
-
-The planned role is:
-
-- Primary 2 TB HDD: multi-user file, photo, and video storage
-- Secondary 2 TB HDD: automated backup target for important data and selected services
-
-## Design Constraints
-
-A small-form-factor business desktop was intentionally used to keep the project inexpensive, power-efficient, and representative of hardware that can be repurposed for a practical home IT lab.
+Older references to smaller SSDs are historical; their continued presence is unconfirmed. No spare PCIe slot is reported with the HBA and network adapter installed. Expansion decisions must account for physical space, cooling, power, and available host resources.

@@ -2,6 +2,8 @@
 
 ## Overview
 
+The following records previously completed configuration and tests. Current versions, settings, and service health have not been rechecked during this documentation review.
+
 A dedicated Ubuntu Server VM hosts a Paper Minecraft server for a small private group. The server is intentionally treated as a public-facing workload and placed in its own DMZ.
 
 ## Service Design
@@ -21,7 +23,7 @@ A dedicated Ubuntu Server VM hosts a Paper Minecraft server for a small private 
 
 The VM is sized for a small group and tuned for stability rather than maximum view distance.
 
-Representative settings:
+Illustrative settings from earlier documentation, not a verified live configuration. View distance has differed between historical records; inspect the running service before tuning:
 
 ```properties
 max-players=10
@@ -35,19 +37,9 @@ enable-query=false
 
 ## Security Architecture
 
-```text
-Internet
-   |
-Upstream Router
-   |
-OPNsense
-   |
-Public-Service DMZ
-   |
-Minecraft VM
-```
+Published traffic passes through the upstream router and OPNsense to the DMZ game VM.
 
-The DMZ is blocked from reaching both the management network and the security lab. Only the ports required by the game service are published externally.
+The documented policy blocks the DMZ from reaching management and the security lab; current enforcement requires live verification. Only the ports required by the game service are published externally.
 
 ## Anti-Cheat
 

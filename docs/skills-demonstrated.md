@@ -51,6 +51,16 @@
 - NAT and port-forwarding validation
 - Linux service/plugin problems
 
+## Storage and Recovery
+
+- Multi-user Samba shares and private-directory permissions
+- Filesystem quotas and shared-storage accounting
+- Persistent ext4 mounts and stable disk mappings
+- rsnapshot retention, scheduled backups, and file restoration
+- Backup failure notifications and SMART alert-path testing
+- USB-to-SAS storage migration while preserving existing filesystems
+- Tailscale remote SMB access and private password self-service
+
 ## Documentation
 
 - Architecture documentation

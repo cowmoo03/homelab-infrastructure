@@ -1,50 +1,35 @@
 # Security Controls
 
-## Security Model
+The lab uses workload separation, network segmentation, authenticated services, and least privilege. These controls reduce risk; documented intent does not substitute for current verification.
 
-The homelab uses network segmentation and least privilege rather than placing every workload on one flat network.
+## Implemented and Previously Tested
 
-## Trust Zones
+- Separate security-lab and public-service DMZ networks behind OPNsense
+- Restricted public forwarding for game services, without intentional public management exposure
+- Samba authentication, private-directory permissions, shared-group restrictions, and quotas
+- Cross-user private-share denial tested from Windows
+- Remote storage access through Tailscale
+- Private HTTPS password portal with current-password verification
+- Versioned local file backups and a successful restore test
+- Backup failure and SMART alert notification tests
+- Minecraft whitelist and online authentication, with RCON/query disabled in the documented configuration
 
-### Management
+## Verification Gaps
 
-Reserved for infrastructure administration such as the hypervisor and network-management interfaces.
+Recheck live firewall rules, bridge placement, IPv6, overlay permissions, service patch levels, backup freshness, and SMART device coverage before granting new access. A Tailscale connection alone does not establish least privilege, and a synthetic alert does not prove present disk health.
 
-### Security Lab
+## Additional Storage User — Planned
 
-Used for experimentation and cybersecurity practice. It can reach the internet but is isolated from management systems.
+Use a dedicated non-login account, private directory, explicit Samba authorization, and an enforced quota. Do not add the account to existing shared-storage groups by default. Proposed remote access is NAS TCP 445 only; password-portal access is separate if needed. Verify denied access to other shares and administration, as well as successful use of the private share.
 
-### Public-Service DMZ
+## Docker Environment — Planned
 
-Used for internet-facing services. It is isolated from both management and the security lab.
+Treat Docker administration as control of the guest. Use a separate VM and externally enforced network restrictions, including protection of the NAS, hypervisor, upstream router, other guests, and overlay resources. Do not mount production NAS data into the test environment.
 
-## Service Hardening
+Define authorized test targets and permitted outbound traffic before security testing. Active exploitation exercises belong on disposable targets with dummy data. No design guarantees impossible compromise.
 
-Current controls include:
+## Publishing and Secret Handling
 
-- Default-deny thinking between trust zones
-- Explicit firewall rules for required traffic
-- No direct public exposure of Proxmox management
-- No direct public exposure of OPNsense management
-- No public SSH forwarding to the Minecraft VM
-- Minecraft whitelist enabled
-- Minecraft online authentication enabled
-- RCON and query disabled
-- Anti-cheat monitoring enabled
+Follow [CONTRIBUTING.md](../CONTRIBUTING.md). Public documentation uses generic account labels and omits personal names, addresses, tailnet identifiers, credentials, private keys, webhook URLs, disk serials/WWNs, and raw operational exports.
 
-## Portfolio Sanitization
-
-This public repository intentionally excludes operational secrets and personally identifying infrastructure details, including:
-
-- Public IP addresses
-- MAC addresses
-- Passwords
-- API keys and tokens
-- SSH private keys
-- Exact physical location
-- Raw configuration exports that may contain secrets
-- Personal account identifiers not required for the project
-
-## Principle
-
-The core design principle is to reduce unnecessary trust between systems. A compromise of a public-facing or experimental workload should not automatically provide access to infrastructure-management systems.
+Review file contents, filenames, images, diffs, and commit messages before publishing. Deleting a value from the latest file does not remove it from Git history. If a credential is exposed, revoke or rotate it promptly; history cleanup alone cannot invalidate a copied secret. Coordinate any history rewrite and account for forks, cached views, and existing clones.

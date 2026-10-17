@@ -1,106 +1,62 @@
 # Homelab Infrastructure
 
-A hands-on Proxmox-based homelab built to practice virtualization, Linux administration, networking, firewalling, server administration, and cybersecurity.
+A practical Proxmox homelab for learning Linux administration, virtualization, network segmentation, storage, backups, and cybersecurity.
 
-This repository documents the architecture, security model, troubleshooting process, and technical skills developed while building and operating the lab.
+This public portfolio explains the design and work completed without publishing personal user identities or operational secrets. All user labels are placeholders. See [publishing rules](CONTRIBUTING.md).
 
-> This is a sanitized public portfolio. Operational secrets, public IP addresses, MAC addresses, credentials, private keys, exact location information, and sensitive configuration exports are intentionally excluded.
+**Documentation reviewed: October 17, 2026.** This is a record of completed work and the latest reported configuration, not live monitoring. [Current state](docs/current-state.md) distinguishes documented results, pending verification, and future plans.
+
+## Completed Work
+
+- Proxmox host with separate firewall, Linux, desktop-lab, game-server, and NAS VM roles
+- OPNsense routing, DHCP, NAT, and segmented security-lab and public-service networks
+- Ubuntu/Samba NAS with private shares, shared storage, filesystem permissions, and quotas
+- Encrypted remote NAS access through Tailscale, tested from outside the home network
+- Private HTTPS password-change portal with current-password verification
+- Scheduled rsnapshot backups, a successful file-restore test, and failure-only Discord alerts
+- Migration of the NAS disks from an unreliable USB dock to an external SAS shelf
+- SMART monitoring and alert testing; current device mappings require rechecking after hardware work
+- Paper Minecraft service with whitelist, online authentication, anti-cheat monitoring, and proximity voice chat
+
+## Hardware and Storage
+
+| Component | Latest reported state |
+|---|---|
+| Hypervisor | Dell Precision 3440 SFF, Intel Core i7-10700 |
+| Memory | 32 GB across four 8 GB DIMMs |
+| Main SSD | 1 TB for host/VM storage; exact allocation needs live verification |
+| Production NAS disks | Two 2 TB enterprise HDDs: primary data and separate backup target |
+| External storage | EMC KTN-STL3 shelf connected through an LSI 9200-8e / SAS2008 HBA |
+| Expansion | Four purchased 4 TB HDDs; deployment and array design pending |
+
+The documented NAS uses **a primary disk and a backup disk**, not a mirrored RAID pair. The purchased expansion disks do not yet represent usable production capacity.
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    Internet[Internet] --> Router[Upstream Router]
-    Router --> PVE[Proxmox VE Host]
-
-    PVE --> Mgmt[Management Network]
-    PVE --> FW[OPNsense Firewall]
-    PVE --> Linux[Ubuntu Server]
-    PVE --> NAS[NAS Server]
-
-    FW --> SecLab[Security Lab]
-    FW --> DMZ[Public-Service DMZ]
-
-    SecLab --> Desktop[Ubuntu Desktop Lab VM]
-    DMZ --> MC[Minecraft Server VM]
-```
-
-The design uses separate trust zones for infrastructure management, cybersecurity experimentation, and internet-facing services.
-
-## Highlights
-
-- Built and administered a **Proxmox VE** virtualization host
-- Deployed **OPNsense** as a virtual firewall/router
-- Configured segmented networks using **managed switching, VLAN concepts, Linux bridges, routing, DHCP, NAT, and firewall rules**
-- Created a dedicated **security-lab network** isolated from management systems
-- Built a separate **DMZ for a public-facing Minecraft server**
-- Added **proximity voice chat** using a Paper plugin, Fabric client mod, and dedicated UDP forwarding through OPNsense
-- Built a dedicated **multi-user NAS VM** with private storage, shared storage, filesystem permissions, and per-user quotas
-- Deployed and managed **Ubuntu Server** workloads
-- Configured persistent Linux storage with **ext4 and /etc/fstab**
-- Created **systemd** services for application management
-- Hardened public-facing services by reducing exposed ports and separating trust zones
-- Troubleshot routing, DHCP, interface naming, firewall ordering, NAT, Linux services, and storage configuration
+OPNsense routes the security-lab and public-service DMZ networks. Proxmox hosts the VMs; hosting a VM does not itself enforce network isolation. The NAS has its own Tailscale endpoint for remote SMB access. See the [architecture diagram](docs/architecture.md) and [network policy](docs/networking.md).
 
 ## Documentation
 
 | Area | Documentation |
 |---|---|
+| Status and verification | [Current State](docs/current-state.md) |
 | Architecture | [Architecture Overview](docs/architecture.md) |
+| Hardware | [Hardware Inventory](docs/hardware.md) |
+| Virtualization | [Proxmox](docs/proxmox.md) |
 | Networking | [Networking and Segmentation](docs/networking.md) |
 | Firewall | [OPNsense](docs/opnsense.md) |
-| Virtualization | [Proxmox](docs/proxmox.md) |
-| NAS / Storage | [NAS Storage](docs/nas-storage.md) |
-| Hardware | [Hardware](docs/hardware.md) |
-| Minecraft | [Minecraft Server](docs/minecraft.md) |
+| Storage and backups | [NAS Storage](docs/nas-storage.md) |
+| Game service | [Minecraft Server](docs/minecraft.md) |
 | Security | [Security Controls](docs/security.md) |
 | Troubleshooting | [Troubleshooting Notes](docs/troubleshooting.md) |
 | Skills | [Skills Demonstrated](docs/skills-demonstrated.md) |
-| Future Work | [Roadmap](docs/roadmap.md) |
+| Next projects | [Roadmap](docs/roadmap.md) |
 
-## Security Model
+## Next Priorities
 
-The lab follows a segmented design rather than placing all systems on one flat network.
+1. Verify the live NAS configuration, permissions, quotas, backups, and remote-access policy.
+2. Provision an additional private storage user and prove access restrictions.
+3. Build a separate Docker VM with externally enforced network isolation.
+4. Validate expansion disks before choosing a storage layout or migrating data.
 
-```text
-Management Network
-    |
-    | isolated
-    |
-Security Lab -------- blocked --------> Management
-    |
-    | separate trust zone
-    |
-Public-Service DMZ --- blocked --------> Management / Security Lab
-```
-
-Public-facing workloads receive only the network access required for their function. Hypervisor and firewall-management interfaces are not intentionally exposed to the public internet.
-
-## Technologies
-
-**Virtualization:** Proxmox VE  
-**Firewall/Router:** OPNsense  
-**Operating Systems:** Ubuntu Server, Ubuntu Desktop  
-**Networking:** Managed Ethernet switching, VLAN concepts, Linux bridges, DHCP, NAT, firewall policy  
-**Administration:** Linux CLI, SSH, systemd, journalctl, filesystem management  
-**Storage:** ext4, persistent mounts, Linux permissions, user/group quotas  
-**Security:** Network segmentation, DMZ design, least privilege, service hardening  
-**Services:** Paper Minecraft server, GrimAC anti-cheat, Simple Voice Chat
-
-## Project Purpose
-
-The goal of this lab is to move beyond classroom-only concepts and gain practical experience designing, configuring, breaking, troubleshooting, and securing real systems.
-
-The environment is intentionally evolving as new services, monitoring, automation, storage, and cybersecurity exercises are added.
-
-## Planned Work
-
-- Automated backups
-- Centralized logging and SIEM
-- Windows Server / Active Directory
-- Additional isolated security-testing systems
-- Ansible configuration automation
-- Network and service monitoring
-- Secure remote NAS access
-- Local AI-assisted administration
-- Expanded recovery and disaster-recovery documentation
+Windows Server/Active Directory, SIEM, Ansible, full-VM backups, offsite recovery, and local AI remain future projects unless subsequently documented as completed.

@@ -1,175 +1,68 @@
-# NAS Storage
+# NAS Storage and Backups
 
-## Overview
+**Status:** Core NAS functionality was implemented and tested. The latest owner report says the original production arrangement was restored after a temporary expansion-drive test. Current health and configuration must be inspected before adding access.
 
-A dedicated Ubuntu Server VM provides multi-user network storage for the homelab. Two validated 2 TB enterprise HDDs are attached directly to the VM:
-
-- Primary storage mounted at `/srv/storage`
-- Backup storage mounted at `/srv/backups`
-
-Both drives use ext4 and mount persistently through `/etc/fstab`.
+All user names and share labels below are anonymous examples.
 
 ## Storage Layout
 
-The primary data disk is organized into private user areas and a shared area:
+A dedicated Ubuntu Server VM provides Samba storage. Two 2 TB enterprise disks are mapped into the VM by stable host device identity, formatted as ext4, and mounted persistently through `/etc/fstab`.
 
-```text
-/srv/storage/
-├── users/
-│   ├── user1/
-│   │   ├── Files/
-│   │   ├── Photos/
-│   │   └── Videos/
-│   └── user2/
-│       ├── Files/
-│       ├── Photos/
-│       └── Videos/
-└── shared/
-    ├── Files/
-    ├── Photos/
-    └── Videos/
-```
+| Filesystem label | Mount | Role |
+|---|---|---|
+| `STORAGE` | `/srv/storage` | Primary user files |
+| `BACKUPS` | `/srv/backups` | Separate versioned backup target |
 
-Private directories are restricted to their owners. The shared directory uses a dedicated group for authorized users.
+This documented layout is a primary disk plus a backup disk, **not RAID**. It does not establish whether unrelated host or guest storage uses redundancy.
+
+| Example share | Example path | Access |
+|---|---|---|
+| `User1` | `/srv/storage/users/user1` | First private storage account |
+| `User2` | `/srv/storage/users/user2` | Second private storage account |
+| `Shared` | `/srv/storage/shared` | Authorized shared-storage group |
+
+Private directories use owner-only filesystem access and Samba restrictions. Storage users are documented as non-login accounts, separate from administrator access. Shared uploads use a dedicated service account for quota accounting.
 
 ## Quotas
 
-Filesystem quotas are enabled on the primary storage volume.
+| Allocation | Documented limit |
+|---|---|
+| First private account | 550 GiB |
+| Second private account | 550 GiB |
+| Shared pool | 400 GiB |
 
-Current allocation:
+Remaining capacity was reserved. Verify live quota enforcement, current usage, and free space before assigning another quota. A proposed additional-user quota has not been implemented or finalized. Primary quotas do not guarantee sufficient backup space for retained versions.
 
-- User1: 550 GiB
-- User2: 550 GiB
-- Shared pool: 400 GiB
-- Remaining capacity is intentionally left unallocated as reserve
+## Access and Validation
 
-The shared pool is owned by a dedicated service account so shared files count against the shared quota instead of either user's personal quota.
+Previously completed tests include Windows file creation, rename and deletion; cross-user private-share denial; authenticated shared-folder access; persistent mapped drives; and access through a mobile hotspot using Tailscale. A router DHCP reservation was configured for stable LAN access. Android access was reported working; macOS validation was deferred.
 
-## SMB Access
+Remote SMB uses Tailscale rather than public SMB forwarding. A new recipient's access must be tested with that recipient's own identity and credentials. Existing owner access does not prove restrictions for other users.
 
-Samba is installed and configured with three authenticated shares:
+## Versioned File Backups
 
-- `User1` — private to the User1 account
-- `User2` — private to the User2 account
-- `Shared` — available to authorized members of the shared NAS group
+rsnapshot stores backups on the second disk, with documented retention of seven daily and four weekly snapshots. Cron schedules daily processing at 03:00 and weekly processing on Sunday at 04:00 in the NAS system timezone; verify the timezone and actual cron configuration before changing schedules.
 
-Windows SMB access to the User1 share was tested successfully through File Explorer. Read/write operations were validated by creating, renaming, and deleting a test file.
+A manual backup and a restore of a deleted test file were verified, including ownership and permissions. Scheduled jobs use a wrapper that sends a Discord alert on failure and stays silent on success. Both a synthetic failure and a real successful backup run were tested.
 
-Cross-user isolation was also tested successfully: an authenticated User1 session was denied access to the User2 private share.
-
-The Shared SMB area was also tested successfully from Windows with authenticated read/write access.
-
-The Windows client now maps the SMB shares as persistent network drives with reconnect-at-sign-in enabled, so the private and shared storage remain available directly under This PC.
-
-The NAS also has a DHCP reservation on the home router so its LAN address remains consistent and mapped SMB paths do not break after lease changes or router reboots.
-
-## Remote Access
-
-Tailscale is installed on the NAS and client devices to provide encrypted remote access without exposing SMB directly to the public internet.
-
-Remote SMB access was tested successfully from a Windows client while connected through a mobile hotspot, confirming that both the private and shared NAS shares are reachable from outside the home network.
-
-Local clients continue to use the LAN address for direct access, while remote clients use the Tailscale path.
-
-## Backups
-
-The secondary 2 TB disk is used as a versioned backup target with rsnapshot.
-
-Current retention policy:
-
-- 7 daily snapshots
-- 4 weekly snapshots
-
-A manual daily snapshot was completed successfully and verified to contain the expected storage tree, including the private user directories and shared data.
-
-A full restore test was also completed successfully: a test file was snapshotted, deleted from the live SMB share, restored from `daily.0`, and confirmed back on the primary storage with the correct ownership and permissions.
-
-Backup automation is configured with cron:
-
-- Daily snapshot at 3:00 AM
-- Weekly snapshot every Sunday at 4:00 AM
+These are local file backups. They do not establish full-VM backups or offsite disaster recovery. Check the latest successful run, retention behavior, target mount, and space before relying on recovery.
 
 ## Password Self-Service
 
-A private web-based Samba password portal is available through Tailscale Serve over HTTPS. It is not exposed to the public internet.
+A private HTTPS portal is served through Tailscale Serve. It verifies the current Samba password before allowing a change. An end-to-end password change followed by a fresh Windows SMB login was tested.
 
-The portal requires the user's current Samba password before allowing a change. Current-password verification is performed against the local Samba service, and only a successful verification permits the restricted password-reset operation.
+For a forgotten password, an administrator sets a temporary Samba password and the user replaces it through the portal. The earlier SSH-based workaround was removed. Portal access for an additional account requires explicit authorization and a separate test; it is not implied by SMB access.
 
-A full end-to-end test was completed successfully: the password was changed through the portal, Windows SMB sessions were cleared, and the new credential was confirmed to open the user's network share.
+## Storage Transport and Monitoring
 
-If the user forgets the password entirely, the administrator can assign a temporary Samba password. The user then signs in to the portal with that temporary password and replaces it privately with a new one.
+The unreliable dual-bay USB dock was replaced by an EMC KTN-STL3 shelf connected through an external SAS HBA. Existing filesystem labels and UUIDs were retained. Stable host disk mappings were updated, both mounts were verified, and Windows share access was tested.
 
-The earlier SSH-based password-change workaround was removed after the web portal was validated, leaving the browser-based workflow as the supported self-service method.
+The migration record states that SMART monitoring was updated to stable SAS device mappings and re-enabled. Older USB Prolific/by-path monitoring instructions are obsolete. Inspect the current `smartd` configuration and each monitored device before claiming present coverage.
 
-## Access-Control Design
+A synthetic SMART warning was previously delivered through the alert chain. That test proves the notification path at the time; it does not independently prove current monitoring of every disk. Credentials and webhook URLs remain private.
 
-- Private user directories are owner-only
-- Shared storage is accessible only to members of the shared NAS group
-- Administrative access is separate from storage-user access
-- Storage users use non-login system accounts
-- SMB authentication maps users to their intended private or shared storage
-- Shared uploads are forced to a dedicated shared-storage account so they count against the shared quota
-- Remote access is provided through an encrypted overlay network rather than public SMB exposure
+## Reboot Validation and Next Change
 
-## Backup Failure Alerts
+A prior NAS reboot test verified both mounts, Samba, Tailscale, the password portal, HTTPS serving, and Windows share access. Repeat relevant checks after storage or network changes.
 
-The NAS backup schedule now runs through a monitoring wrapper instead of calling `rsnapshot` directly.
-
-Current scheduled jobs:
-
-- Daily backup at 03:00
-- Weekly backup every Sunday at 04:00
-
-The wrapper runs the requested `rsnapshot` interval, checks the exit code, and stays silent on success. If the backup fails, it sends a Discord alert to the NAS alerts channel with the host, backup interval, exit code, timestamp, and recent error output.
-
-A synthetic failure alert was tested successfully, and a real daily backup was also run through the wrapper successfully with exit code 0 and no false Discord alert.
-
-## Storage Transport Migration
-
-The NAS data disks were migrated from a dual-bay USB dock to an EMC KTN-STL3 disk shelf connected through an LSI SAS2008 external HBA.
-
-The USB dock previously dropped both disks simultaneously, which caused the NAS VM to enter an I/O error state. After moving the same drives to the SAS shelf:
-
-- Both 2 TB enterprise HDDs were detected individually through the HBA
-- Existing ext4 filesystem labels and UUIDs remained intact
-- SMART checks showed zero reallocated, pending, uncorrectable, and CRC errors on both drives
-- The NAS VM disk mappings were updated from unstable USB paths to stable serial-based `/dev/disk/by-id/` paths
-- Both `/srv/storage` and `/srv/backups` mounted successfully inside the NAS VM
-- Samba shares were verified from a Windows client
-- SMART monitoring was updated to stable `by-id` paths and re-enabled successfully
-
-This migration removes the USB dock as a storage dependency and provides a more appropriate SAS-attached platform for future disk expansion.
-
-## SMART Monitoring and Discord Alerts
-
-The Proxmox host now monitors all three attached drives with `smartd`:
-
-- Proxmox system SSD
-- Primary NAS 2 TB HDD
-- Backup NAS 2 TB HDD
-
-The two NAS HDDs are monitored through their stable `/dev/disk/by-path` device paths using the USB Prolific bridge type, so monitoring does not depend on temporary `/dev/sdX` names.
-
-A root-only Discord webhook is stored locally and used by a custom `smartd-runner` script. SMART warnings are sent to a dedicated Discord NAS alerts channel.
-
-The complete alert chain was tested successfully with a synthetic SMART test event:
-
-`smartd -> smartd-runner -> Discord alert script -> Discord channel`
-
-The test alert identified the Proxmox host, affected device, alert type, and SMART message.
-
-## Reboot Validation
-
-A reboot validation was completed successfully. After restarting the NAS VM:
-
-- Both storage filesystems remounted successfully
-- Samba returned to an active state
-- Tailscale reconnected automatically
-- The password portal service returned to an active state
-- Tailscale Serve restored the private HTTPS proxy
-- Windows mapped shares opened normally
-- The password portal remained reachable
-
-## Status
-
-Core NAS functionality is complete for the current scope. macOS Finder access is intentionally not being tested at this time.
+Before adding another user: inspect Samba configuration, mounted filesystems, ownership/ACLs, quotas, backup health, and Tailscale policy. Preserve a rollback copy of affected configuration privately. Add only the new private account/share, verify allowed and denied access, and retest existing users. See [roadmap](roadmap.md).

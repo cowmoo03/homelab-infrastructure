@@ -1,39 +1,23 @@
 # OPNsense Firewall
 
-## Role
+OPNsense is deployed as a Proxmox VM for routing, DHCP, NAT, and policy enforcement between the upstream network, security lab, and public-service DMZ.
 
-OPNsense is deployed as a virtual firewall/router inside Proxmox. It provides routing and policy enforcement between the upstream network, the isolated security lab, and the public-service DMZ.
+## Documented Interfaces and Policy
 
-## Interfaces
+| Zone | Intended access |
+|---|---|
+| Upstream/WAN | Upstream connectivity and specifically forwarded services |
+| Security lab | Internet access; management access blocked |
+| Public-service DMZ | Required internet access; management and security-lab access blocked |
 
-OPNsense has separate virtual interfaces for:
+Firewall administration is restricted to authorized management paths. Service networks should reach only the firewall services they require. Current interface assignments and rule enforcement need live verification; no raw rule export or operational address is published here.
 
-- Upstream/WAN connectivity
-- Security-lab LAN
-- Public-service DMZ
+## Public Services
 
-## Firewall Design
+The upstream router forwards the published Minecraft services to OPNsense, which translates them to the game VM. Gameplay uses TCP; proximity voice uses its required UDP service. Hypervisor management, firewall management, NAS SMB, and SSH are not intentionally forwarded publicly.
 
-### Security Lab
+## Validation Lessons
 
-- Internet access: allowed
-- Management-network access: blocked
-- Firewall access: limited to services required for administration and networking
+Previous work resolved a missing default route, incorrect DHCP interface selection, and a broad allow rule evaluated before an intended block. The lesson is to verify rule order and actual traffic paths after every network change.
 
-### Public-Service DMZ
-
-- Internet access: allowed as required
-- Management-network access: blocked
-- Security-lab access: blocked
-- Firewall web-management access: blocked
-- Inbound access: limited to explicitly published application ports
-
-## NAT
-
-Inbound traffic for the Minecraft service is forwarded through the upstream router to OPNsense, then translated to the isolated game-server VM.
-
-No hypervisor, SSH, or firewall-management interface is intentionally exposed to the public internet.
-
-## Troubleshooting Experience
-
-During the build, I worked through issues involving interface assignment, default routes, DHCP interface selection, firewall rule ordering, and NAT validation.
+OPNsense only filters traffic that traverses it. Same-bridge traffic and separate overlay-network paths require their own controls. The proposed Docker segment is future work; its policy will need IPv4/IPv6, DNS, updates, egress, and management-access tests before use.

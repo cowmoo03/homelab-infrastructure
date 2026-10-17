@@ -1,43 +1,37 @@
 # Networking and Segmentation
 
-## Overview
+The documented design uses a managed switch, Intel multi-port NIC, Proxmox Linux bridges, and OPNsense. Network labels describe intended roles; inspect routes and firewall behavior before relying on isolation.
 
-The lab uses a managed switch, a multi-port Intel NIC, Proxmox Linux bridges, and OPNsense to separate workloads into distinct trust zones.
+## Documented Bridge Roles
 
-## Logical Networks
-
-| Network | Purpose |
-|---|---|
-| Management | Hypervisor and infrastructure administration |
-| Security Lab | Isolated environment for cybersecurity testing |
-| Public-Service DMZ | Hosts internet-facing services such as the Minecraft server |
-
-## Proxmox Bridges
-
-| Bridge | Role |
+| Bridge | Intended role |
 |---|---|
 | `vmbr0` | Management / upstream connectivity |
 | `vmbr1` | Security lab |
 | `vmbr2` | Public-service DMZ |
 
-## Segmentation Policy
+Current physical NIC mapping, switch ports, VLAN membership, PVIDs, guest interfaces, and subnet assignments need live verification. Operational addresses and device identifiers are deliberately omitted.
 
-The security lab can reach the internet but is blocked from directly accessing the management network. The public-service DMZ is separately isolated from both the management network and the security lab.
+## Intended Policy
 
-The intent is to limit lateral movement if an experimental or public-facing workload is compromised.
+| Source | Destination | Policy |
+|---|---|---|
+| Security lab | Internet | Permitted through firewall policy |
+| Security lab | Management | Blocked |
+| DMZ | Internet | Required services permitted |
+| DMZ | Management and security lab | Blocked |
+| Internet | Published game services | Required forwarded ports only |
+| Authorized remote storage client | NAS | Explicit Tailscale and Samba access |
+| Proposed Docker segment | NAS, management, other private networks | Blocked; not yet implemented |
 
-## Managed Switching
+## Separate Remote-Access Path
 
-A TP-Link Easy Smart managed switch is used to practice VLAN membership, PVID configuration, and access-port behavior. A dedicated Intel multi-port NIC provides additional physical interfaces for lab segmentation.
+Tailscale runs on the NAS and authorized clients. Off-site SMB access was tested previously. Tailscale policy must be reviewed independently of OPNsense: broad member permissions or subnet routes can bypass the intended restrictions.
 
-## Skills Practiced
+For an additional storage recipient, the proposed starting permission is NAS TCP 445 only. The HTTPS password portal is a separate permission if required. Do not assume an existing membership or shared-device rule is sufficiently restrictive.
 
-- VLAN concepts
-- Access-port configuration
-- Linux bridges
-- DHCP
-- Routing
-- NAT
-- Firewall policy
-- Network isolation
-- Connectivity validation with ping and route inspection
+## Validation Before Access Changes
+
+Check IPv4 and IPv6, direct same-bridge communication, upstream routes, VPN routes, firewall rule order, and return paths. Test the actual application ports from the recipient's identity; ping alone does not prove that SMB or management access is blocked.
+
+Keep administrative connectivity available during changes and preserve private configuration backups. The future Docker VM must be isolated by controls outside the guest, since a guest administrator can change guest firewall settings.

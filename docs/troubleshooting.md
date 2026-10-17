@@ -60,3 +60,13 @@ Approach:
 5. Restarted and verified a clean plugin load.
 
 These incidents helped reinforce a repeatable workflow: observe, isolate the layer involved, change one variable at a time, and verify the result.
+
+## NAS USB Dock Disconnections
+
+Both NAS disks disappeared during I/O through a dual-bay USB dock, leaving the VM in an I/O error state. The disks were moved to the external SAS shelf, their identities and filesystems were checked, and stable host mappings were updated. Both NAS mounts and client access were verified afterward. USB-specific monitoring settings became obsolete and must not be reused for the SAS connection.
+
+## Expansion Disk Reported Reduced Capacity
+
+One newly purchased nominal 4 TB SAS disk reported 3 TB. After confirming its identity and that it contained no production data, its reported capacity was restored and independently checked. The production disk arrangement was then restored and normal operation reported.
+
+This is a historical result, not a reusable disk command recipe. Identify each disk individually, check VM ownership and mounted data, and obtain explicit approval before destructive storage operations. Temporary device letters are not stable identifiers. Capacity restoration alone does not establish drive health.

@@ -1,43 +1,38 @@
 # Architecture Overview
 
-This homelab is built around a Proxmox VE host used to practice virtualization, Linux administration, networking, firewalling, and cybersecurity.
+Proxmox hosts the firewall and service VMs. Network policy is enforced by routing, firewall rules, and bridge/VLAN placement, not by VM separation alone.
 
-## Core Components
+## Logical Network Design
 
-- Proxmox VE hypervisor
-- OPNsense virtual firewall/router
-- Ubuntu Server virtual machines
-- Ubuntu Desktop security-lab client
-- Dedicated Minecraft server VM
-- Managed Ethernet switch
-- Multi-port Intel NIC for segmented lab networking
-
-## Logical Layout
-
-```text
-Internet
-   |
-Upstream Router
-   |
-Proxmox Host
-   |
-   +-- Management Network
-   |
-   +-- OPNsense
-       |
-       +-- Security Lab Network
-       |   +-- Ubuntu Desktop Lab VM
-       |
-       +-- Minecraft DMZ
-           +-- Minecraft Server VM
+```mermaid
+flowchart TD
+    Internet[Internet] --> Router[Upstream router]
+    Router --> Upstream[Upstream network]
+    Upstream --> Management[Infrastructure management]
+    Upstream --> NAS[NAS VM]
+    Upstream --> Firewall[OPNsense VM]
+    Firewall --> Lab[Security lab]
+    Firewall --> DMZ[Public-service DMZ]
+    Lab --> Client[Ubuntu lab client]
+    DMZ --> Game[Minecraft VM]
+    Remote[Authorized remote client] -. Tailscale .-> NAS
 ```
 
-The design separates management, security-lab, and public-facing workloads so they do not share the same trust boundary.
+This is the documented logical design, not a live wiring map. The NAS upstream attachment and actual routes require verification before access changes. The general-purpose Ubuntu server's current network placement is not asserted here.
 
-## Design Goals
+## VM Hosting
 
-- Practice realistic network segmentation
-- Learn firewall policy and NAT
-- Isolate public-facing services from management systems
-- Build repeatable VM and service deployments
-- Document troubleshooting and operational decisions
+The Proxmox host runs the OPNsense, general-purpose Ubuntu, desktop-lab, NAS, and Minecraft workloads. Exact VM IDs, allocations, interfaces, and active states are maintained privately and must be checked on the host.
+
+## Storage Attachment
+
+The host's external SAS HBA connects to the EMC shelf. Individual data and backup disks are mapped into the NAS VM using stable device identities. The NAS manages their ext4 filesystems. This is disk mapping, not a claim that the entire PCIe HBA is passed through to the guest.
+
+## Trust Boundaries
+
+- Security-lab traffic is intended to be blocked from management systems.
+- The public-service DMZ is intended to be blocked from both management and the security lab.
+- Tailscale access is a separate path that must be constrained by its own policy and service permissions.
+- A directly attached upstream VM may bypass OPNsense; verify actual packet paths.
+
+The proposed Docker VM will require a separate restricted segment. It is not yet part of the deployed architecture. See [networking](networking.md), [security](security.md), and [current state](current-state.md).
