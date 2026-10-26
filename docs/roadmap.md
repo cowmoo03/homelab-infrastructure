@@ -28,6 +28,14 @@ Validate all four purchased 4 TB drives individually after caddies arrive. One d
 
 Scheduled NAS file backups, local restore testing, remote SMB access, and basic Discord alerts are already documented accomplishments; expansion of those capabilities remains future work.
 
+## 6. Per-User Notifications and Self-Service
+
+A Discord bot giving each storage user a private channel for their own activity and account actions, designed so credentials are never exposed in chat.
+
+- **Storage notifications:** a filesystem watcher (inotify) on the NAS posts per-user events — upload confirmations, quota usage, backup completion — to each user's channel through a dedicated webhook. Attribution inside the shared folder relies on Samba `full_audit` logging, since forced-user writes hide the uploader's identity.
+- **Password self-service:** a Discord command may initiate the flow but never accepts a password in chat. It issues a one-time, expiring link to the existing authenticated portal, where the credential is set over HTTPS. A forgotten-password request notifies the administrator to assign a temporary credential, as in the current design.
+- **Threat considerations:** the bot holds privileged access and binds a third-party identity to a storage account, so it is treated as a high-value target. Credential entry stays in the hardened portal rather than the chat platform, and least-privilege command authorization is required.
+
 ## Longer-Term Learning
 
 - Windows Server and Active Directory
