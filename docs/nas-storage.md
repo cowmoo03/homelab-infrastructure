@@ -49,7 +49,7 @@ For a forgotten password, an administrator sets a temporary Samba password and t
 
 ## Storage Transport and Monitoring
 
-The unreliable dual-bay USB dock was replaced by an EMC KTN-STL3 shelf connected through an external SAS HBA. Existing filesystem labels and UUIDs were retained. Stable host disk mappings were updated, both mounts were verified, and Windows share access was tested.
+The unreliable dual-bay USB dock was replaced by a 15-bay external SAS disk shelf connected through an external SAS HBA. Existing filesystem labels and UUIDs were retained. Stable host disk mappings were updated, both mounts were verified, and Windows share access was tested.
 
 The migration record states that SMART monitoring was updated to stable SAS device mappings and re-enabled. Older USB Prolific/by-path monitoring instructions are obsolete. Inspect the current `smartd` configuration and each monitored device before claiming present coverage.
 
