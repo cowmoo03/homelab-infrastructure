@@ -25,13 +25,7 @@ Private directories use owner-only filesystem access and Samba restrictions. Sto
 
 ## Quotas
 
-| Allocation | Documented limit |
-|---|---|
-| First private account | 550 GiB |
-| Second private account | 550 GiB |
-| Shared pool | 400 GiB |
-
-Remaining capacity was reserved. Verify live quota enforcement, current usage, and free space before assigning another quota. A proposed additional-user quota has not been implemented or finalized. Primary quotas do not guarantee sufficient backup space for retained versions.
+Per-user and shared-area quotas are enforced on the primary storage volume, with headroom reserved on the disk. Verify live quota enforcement, current usage, and free space before assigning another quota. Primary quotas do not guarantee sufficient backup space for retained versions.
 
 ## Access and Validation
 
@@ -41,7 +35,7 @@ Remote SMB uses Tailscale rather than public SMB forwarding. A new recipient's a
 
 ## Versioned File Backups
 
-rsnapshot stores backups on the second disk, with documented retention of seven daily and four weekly snapshots. Cron schedules daily processing at 03:00 and weekly processing on Sunday at 04:00 in the NAS system timezone; verify the timezone and actual cron configuration before changing schedules.
+rsnapshot stores backups on the second disk, with documented retention of seven daily and four weekly snapshots. Cron runs the daily and weekly jobs on a fixed schedule; verify the timezone and actual cron configuration before changing schedules.
 
 A manual backup and a restore of a deleted test file were verified, including ownership and permissions. Scheduled jobs use a wrapper that sends a Discord alert on failure and stays silent on success. Both a synthetic failure and a real successful backup run were tested.
 
@@ -55,7 +49,7 @@ For a forgotten password, an administrator sets a temporary Samba password and t
 
 ## Storage Transport and Monitoring
 
-The unreliable dual-bay USB dock was replaced by an EMC KTN-STL3 shelf connected through an external SAS HBA. Existing filesystem labels and UUIDs were retained. Stable host disk mappings were updated, both mounts were verified, and Windows share access was tested.
+The unreliable dual-bay USB dock was replaced by a 15-bay external SAS disk shelf connected through an external SAS HBA. Existing filesystem labels and UUIDs were retained. Stable host disk mappings were updated, both mounts were verified, and Windows share access was tested.
 
 The migration record states that SMART monitoring was updated to stable SAS device mappings and re-enabled. Older USB Prolific/by-path monitoring instructions are obsolete. Inspect the current `smartd` configuration and each monitored device before claiming present coverage.
 

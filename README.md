@@ -20,14 +20,14 @@ This public portfolio explains the design and work completed without publishing 
 
 ## Hardware and Storage
 
-| Component | Latest reported state |
+| Component | Class / capability |
 |---|---|
-| Hypervisor | Dell Precision 3440 SFF, Intel Core i7-10700 |
-| Memory | 32 GB across four 8 GB DIMMs |
-| Main SSD | 1 TB for host/VM storage; exact allocation needs live verification |
+| Hypervisor | Small-form-factor business desktop, 8-core/16-thread CPU |
+| Memory | 32 GB |
+| Main SSD | ~1 TB for host/VM storage |
 | Production NAS disks | Two 2 TB enterprise HDDs: primary data and separate backup target |
-| External storage | EMC KTN-STL3 shelf connected through an LSI 9200-8e / SAS2008 HBA |
-| Expansion | Four purchased 4 TB HDDs; deployment and array design pending |
+| External storage | 15-bay external SAS disk shelf via an external SAS HBA (IT mode) |
+| Expansion | Four 4 TB HDDs; deployment and array design pending |
 
 The documented NAS uses **a primary disk and a backup disk**, not a mirrored RAID pair. The purchased expansion disks do not yet represent usable production capacity.
 
