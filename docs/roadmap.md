@@ -28,6 +28,23 @@ Validate all four purchased 4 TB drives individually after caddies arrive. One d
 
 Scheduled NAS file backups, local restore testing, remote SMB access, and basic Discord alerts are already documented accomplishments; expansion of those capabilities remains future work.
 
+## 6. Per-User Notifications and Self-Service
+
+A Discord bot giving each storage user a private channel for their own activity and account actions, designed so credentials are never exposed in chat.
+
+- **Storage notifications:** a filesystem watcher (inotify) on the NAS posts per-user events — upload confirmations, quota usage, backup completion — to each user's channel through a dedicated webhook. Attribution inside the shared folder relies on Samba `full_audit` logging, since forced-user writes hide the uploader's identity.
+- **Password self-service:** a Discord command may initiate the flow but never accepts a password in chat. It issues a one-time, expiring link to the existing authenticated portal, where the credential is set over HTTPS. A forgotten-password request notifies the administrator to assign a temporary credential, as in the current design.
+- **Threat considerations:** the bot holds privileged access and binds a third-party identity to a storage account, so it is treated as a high-value target. Credential entry stays in the hardened portal rather than the chat platform, and least-privilege command authorization is required.
+
+## 7. AI-Assisted Security Monitoring
+
+A local LLM as an analyst's assistant layered on top of conventional detection, not as the detection mechanism itself.
+
+- **Detection stays with purpose-built tools:** an IDS/IPS, a SIEM (e.g., Wazuh), fail2ban, and firewall policy perform real-time detection and blocking. These run continuously on server infrastructure, independent of the model.
+- **The LLM assists on demand:** it summarizes and triages alerts, explains events, drafts detection rules, and produces readable security digests. It is advisory and human-in-the-loop, never wired to take blocking actions on its own.
+- **Prompt-injection caution:** logs and requests contain attacker-controlled text, so the model is never given authority to act on that input. Reading it for analysis is fine; autonomous response to it is not.
+- **Placement:** a dedicated, always-on, GPU-backed machine, kept on an isolated segment and hardened like any other service. A local model keeps security telemetry on-premises instead of sending it to a third party.
+
 ## Longer-Term Learning
 
 - Windows Server and Active Directory
